@@ -216,8 +216,6 @@ int main(int argc, char **argv) {
 	return result;
 }
 
-
-
 // --- DABlinText -----------------------------------------------------------------
 DABlinText::DABlinText(DABlinTextOptions options) {
 	this->options = options;
@@ -304,7 +302,9 @@ void DABlinText::FICChangeService(const LISTED_SERVICE& service) {
 	// fprintf(stderr, "\x1B]0;" "%s - DABlin" "\a", label.c_str());
 
 	// set service
-	fprintf(stderr, "\n{\"service\":{\"label\":\"%s\",\"shortLabel\":\"%s\",\"sid\":\"0x%04X\"}}\n", label.c_str(), short_label.c_str(), service.sid);
+	//int fd = getFd();
+	dprintf(3, "{\"service\":{\"label\":\"%s\",\"shortLabel\":\"%s\",\"sid\":\"0x%04X\"}}\n", label.c_str(), short_label.c_str(), service.sid);
+	//close(fd);
 
 }
 
@@ -315,17 +315,15 @@ void DABlinText::PADChangeDynamicLabel(const DL_STATE& dl) {
 
 		// skip unsupported charsets
 		if(!charset_name.empty()) {
-			fprintf(stderr, "\n{ \"dl\" : \"%s\" }\n", label.c_str());
+			dprintf(3, "{\"dl\":\"%s\"}\n", label.c_str());
 		}
-	} else {
-		fprintf(stderr, "-----");
 	}
 }
 
 void DABlinText::FICChangeEnsemble(const FIC_ENSEMBLE& ensemble) {
 	std::string label = FICDecoder::ConvertLabelToUTF8(ensemble.label, nullptr);
 	std::string short_label = FICDecoder::DeriveShortLabelUTF8(label, ensemble.label.short_label_mask);
-	fprintf(stderr, "\n{\"ensemble\":{\"label\":\"%s\",\"shortLabel\":\"%s\",\"eid\":\"0x%04X\"}}\n", label.c_str(), short_label.c_str(), ensemble.eid);
+	dprintf(3, "{\"ensemble\":{\"label\":\"%s\",\"shortLabel\":\"%s\",\"eid\":\"0x%04X\"}}\n", label.c_str(), short_label.c_str(), ensemble.eid);
 }
 
 void DABlinText::FICDiscardedFIB() {
